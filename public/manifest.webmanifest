@@ -1,0 +1,10 @@
+{
+  "name": "Copeiro by MDM",
+  "short_name": "Copeiro",
+  "description": "Organize campeonatos de futebol, futsal e Fut7.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07110d",
+  "theme_color": "#07110d",
+  "lang": "pt-BR"
+}
