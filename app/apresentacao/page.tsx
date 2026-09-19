@@ -1,12 +1,45 @@
 import Brand from "@/components/Brand";
-const telas=[
-["ABERTURA","Organize. Jogue. Faça história.","/"],
-["LOGIN","Bem-vindo de volta!","/login"],
-["INÍCIO","Todo campeonato começa com uma boa ideia.","/dashboard"],
-["CRIAR","Criação guiada em 5 etapas.","/criar-campeonato"],
-["CAMPEONATO","Copa Cajobi 2027","/c/copa-cajobi-2027"],
-["JOGOS","Rodadas, placares e próximos confrontos.","/c/copa-cajobi-2027"],
-["CLASSIFICAÇÃO","Tabela automática por grupos.","/c/copa-cajobi-2027"],
-["ARTILHARIA","Ranking de jogadores e estatísticas.","/c/copa-cajobi-2027"]
+
+const telas = [
+  ["ABERTURA","Organize. Jogue. Faça história.","/"],
+  ["LOGIN","Bem-vindo de volta!","/login"],
+  ["INÍCIO","Todo campeonato começa com uma boa ideia.","/dashboard"],
+  ["CRIAR","Criação guiada em 5 etapas.","/criar-campeonato"],
+  ["CAMPEONATO","Copa Cajobi 2027","/c/copa-cajobi-2027"],
+  ["JOGOS","Rodadas, placares e próximos confrontos.","/jogos"],
+  ["CLASSIFICAÇÃO","Tabela automática por grupos.","/classificacao"],
+  ["ARTILHARIA","Ranking de jogadores e estatísticas.","/artilharia"],
 ];
-export default function Apresentacao(){return <main className="min-h-screen bg-[#030806] px-5 py-10"><div className="mx-auto max-w-6xl"><div className="flex flex-col items-center text-center"><Brand/><p className="mt-5 max-w-xl text-zinc-400">Plataforma mobile-first para organizar campeonatos de Futebol, Futsal e Fut7.</p><div className="mt-3 rounded-full border border-[#35f58a]/20 bg-[#35f58a]/10 px-4 py-2 text-xs font-black uppercase tracking-widest text-[#35f58a]">Organize · Jogue · Faça história</div></div><div className="mt-12 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">{telas.map(([nome,frase,href],i)=><a href={href} key={nome} className="group overflow-hidden rounded-[34px] border-[7px] border-[#161b19] bg-[#07110d] shadow-[0_25px_70px_rgba(0,0,0,.5)] transition hover:-translate-y-1"><div className="relative h-[560px] overflow-hidden"><img src="/stadium.svg" alt="" className="absolute inset-0 h-full w-full object-cover opacity-30"/><div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#07110d]/70 to-[#07110d]"/><div className="relative flex h-full flex-col p-5"><div className="flex justify-between text-[9px] font-bold"><span>9:41</span><span>● ● ▰</span></div>{i===0?<><div className="mt-14 flex justify-center"><Brand/></div><div className="mt-auto"><h2 className="text-4xl font-black italic leading-[.95]">ORGANIZE.<br/>JOGUE.<br/><span className="text-[#35f58a]">FAÇA HISTÓRIA.</span></h2><div className="mt-8 rounded-xl bg-[#35f58a] p-4 text-center text-sm font-black text-black">COMEÇAR →</div></div></>:<><div className="mt-10 text-[10px] font-black tracking-widest text-[#35f58a]">{nome}</div><h2 className="mt-2 text-2xl font-black leading-tight">{frase}</h2><div className="mt-7 rounded-2xl border border-white/10 bg-black/20 p-4"><img src="/copeiro-logo.svg" className="mx-auto h-24" alt="Copeiro"/><div className="mt-4 h-2 rounded bg-white/10"/><div className="mt-2 h-2 w-2/3 rounded bg-white/10"/></div><div className="mt-4 grid grid-cols-2 gap-3"><div className="h-24 rounded-2xl border border-white/10 bg-[#0b1712]"/><div className="h-24 rounded-2xl border border-white/10 bg-[#0b1712]"/></div><div className="mt-auto rounded-xl bg-[#35f58a] p-4 text-center text-sm font-black text-black">VER NO APP →</div></>}</div></div></a>)}</div><div className="mt-14 rounded-3xl border border-white/10 bg-white/[.03] p-7 text-center"><h2 className="text-2xl font-black">COPEIRO <span className="text-[#35f58a]">by MDM</span></h2><p className="mt-2 text-sm text-zinc-400">Uma identidade esportiva, moderna e simples para quem organiza e para quem acompanha.</p></div></div></main>
+
+export default function Apresentacao() {
+  return (
+    <main className="min-h-screen bg-[#030806] px-5 py-10">
+      <div className="mx-auto max-w-6xl">
+        <div className="flex flex-col items-center text-center">
+          <Brand />
+          <p className="mt-5 max-w-xl text-zinc-400">Plataforma mobile-first para organizar campeonatos de Futebol, Futsal e Fut7.</p>
+        </div>
+        <div className="mt-12 grid gap-7 sm:grid-cols-2 lg:grid-cols-4">
+          {telas.map(([nome, frase, href]) => (
+            <a href={href} key={nome} className="group overflow-hidden rounded-[34px] border-[7px] border-[#161b19] bg-[#07110d] shadow-2xl">
+              <div className="relative h-[560px] overflow-hidden">
+                <img src="/images/stadium.jpg" alt="Futebol" className="absolute inset-0 h-full w-full object-cover opacity-40" />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#07110d]/70 to-[#07110d]" />
+                <div className="relative flex h-full flex-col p-5">
+                  <div className="flex justify-between text-[9px] font-bold"><span>9:41</span><span>COPEIRO</span></div>
+                  <div className="mt-10 text-[10px] font-black tracking-widest text-[#35f58a]">{nome}</div>
+                  <h2 className="mt-2 text-2xl font-black leading-tight">{frase}</h2>
+                  <div className="mt-auto rounded-xl bg-[#35f58a] p-4 text-center text-sm font-black text-black">VER NO APP →</div>
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+        <div className="mt-14 rounded-3xl border border-white/10 bg-white/[.03] p-7 text-center">
+          <h2 className="text-2xl font-black">COPEIRO <span className="text-[#35f58a]">by MDM</span></h2>
+          <p className="mt-2 text-sm text-zinc-400">Organize. Jogue. Faça história.</p>
+        </div>
+      </div>
+    </main>
+  );
+}
