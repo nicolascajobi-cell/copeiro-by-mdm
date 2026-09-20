@@ -15,12 +15,12 @@
 .title{font-size:18px;font-weight:900}.sub{font-size:10px;opacity:.8;margin-top:3px}
 .controls{position:fixed;z-index:5;left:14px;right:14px;bottom:max(17px,calc(env(safe-area-inset-bottom) + 8px));display:flex;flex-direction:column;align-items:center;gap:7px}
 .status{font-size:11px;text-shadow:0 2px 7px #000;text-align:center}.spin{border:0;width:min(91vw,430px);padding:16px;border-radius:999px;background:#e51b23;color:#fff;font-size:17px;font-weight:900;box-shadow:0 8px 26px #e51b2359}
-.secondary{border:0;padding:8px 13px;border-radius:999px;background:#000a;color:#fff;font-weight:800}.credit{font-size:10px;opacity:.72;text-shadow:0 2px 7px #000}
+.secondary{border:0;padding:8px 13px;border-radius:999px;background:#000a;color:#fff;font-weight:800}.credit{font-size:10px;opacity:.72;text-shadow:0 2px 7px #000}.tier{position:absolute;transform:translate(-50%,0);padding:5px 10px;border-radius:999px;background:#000c;border:1px solid #ffffff80;font-size:11px;font-weight:900;text-shadow:0 2px 6px #000;opacity:0;white-space:nowrap;transition:opacity .2s}
 </style>
 </head>
 <body>
 <video id="video" autoplay playsinline muted></video><div class="shade"></div>
-<div id="overlay"><img id="crest0" class="crest" alt=""><img id="crest1" class="crest" alt=""></div>
+<div id="overlay"><img id="crest0" class="crest" alt=""><img id="crest1" class="crest" alt=""><div id="tier0" class="tier"></div><div id="tier1" class="tier"></div></div>
 <div class="top"><div class="title">⚽ DUELO FIFA <small>V1.1</small></div><div class="sub">Fiquem lado a lado • o escudo acompanha cada jogador</div></div>
 <div class="controls"><div class="status" id="status">Carregando detector de rostos...</div><button class="spin" id="spin">🎰 SORTEAR OS DOIS</button><button class="secondary" id="camera">↻ Trocar câmera</button><div class="credit">Criado por Nicolas Alerrandro</div></div>
 <script type="module">
@@ -28,8 +28,13 @@ import {FaceDetector,FilesetResolver} from "https://cdn.jsdelivr.net/npm/@mediap
 const teams=[
 ["Real Madrid","🇪🇸 Espanha",8633],["Barcelona","🇪🇸 Espanha",8634],["Atlético de Madrid","🇪🇸 Espanha",9906],["Manchester City","🏴 Inglaterra",8456],["Liverpool","🏴 Inglaterra",8650],["Arsenal","🏴 Inglaterra",9825],["Chelsea","🏴 Inglaterra",8455],["Manchester United","🏴 Inglaterra",10260],["Tottenham","🏴 Inglaterra",8586],["Bayern de Munique","🇩🇪 Alemanha",9823],["Borussia Dortmund","🇩🇪 Alemanha",9789],["Bayer Leverkusen","🇩🇪 Alemanha",8178],["PSG","🇫🇷 França",9847],["Marseille","🇫🇷 França",8592],["Monaco","🇫🇷 França",9829],["Inter de Milão","🇮🇹 Itália",8636],["Milan","🇮🇹 Itália",8564],["Juventus","🇮🇹 Itália",9885],["Napoli","🇮🇹 Itália",9875],["Roma","🇮🇹 Itália",8686],["Benfica","🇵🇹 Portugal",9772],["Porto","🇵🇹 Portugal",9773],["Sporting","🇵🇹 Portugal",9768],["Ajax","🇳🇱 Holanda",8593],["PSV","🇳🇱 Holanda",8640],["Newcastle","🏴 Inglaterra",10261],["Aston Villa","🏴 Inglaterra",10252],["RB Leipzig","🇩🇪 Alemanha",178475],["Galatasaray","Turquia",8637],["Lazio","Italia",8543],["Lyon","Franca",9748],["Sevilla","Espanha",8302],["Al Hilal","Arabia Saudita",2529],["Al Nassr","Arabia Saudita",101918],["Al Ittihad","Arabia Saudita",8577],["Al Ahli","Arabia Saudita",2530],["Inter Miami","Estados Unidos",960720]];
 const $=s=>document.querySelector(s),video=$("#video"),status=$("#status");
-const crests=[$("#crest0"),$("#crest1")];let stream=null,facing="user",detector=null,running=false,spinning=false,lastTime=-1,assigned=[null,null],smooth=[null,null];
+const crests=[$("#crest0"),$("#crest1")],tiers=[$("#tier0"),$("#tier1")];let stream=null,facing="user",detector=null,running=false,spinning=false,lastTime=-1,assigned=[null,null],smooth=[null,null];
 const logo=id=>"https://images.fotmob.com/image_resources/logo/teamlogo/"+id+".png";
+const elite=new Set(["Real Madrid","Barcelona","Liverpool","Arsenal","Manchester City","Bayern de Munique","PSG","Inter de Milão"]);
+const muitoFortes=new Set(["Atlético de Madrid","Chelsea","Manchester United","Juventus","Napoli","Milan","Bayer Leverkusen","Borussia Dortmund"]);
+const fortes=new Set(["Tottenham","Newcastle","Aston Villa","RB Leipzig","Benfica","Sporting","Porto","Marseille","Monaco","Galatasaray","Al Hilal"]);
+const intermediarios=new Set(["Lazio","Lyon","Sevilla","PSV","Ajax","Roma","Al Nassr","Al Ittihad"]);
+function tierOf(t){if(elite.has(t[0]))return "🔥 ELITE";if(muitoFortes.has(t[0]))return "💥 MUITO FORTE";if(fortes.has(t[0]))return "⚡ FORTE";if(intermediarios.has(t[0]))return "⚽ INTERMEDIÁRIO";return "☠️ AZARÃO"}
 async function initDetector(){
  try{
   const vision=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm");
@@ -52,13 +57,13 @@ function screenBox(b){
  return {x,y:oy+b.originY*scale,w:b.width*scale};
 }
 function updateTrack(i,p){
- const c=crests[i];if(!p){c.style.opacity=0;smooth[i]=null;return}
+ const c=crests[i],tag=tiers[i];if(!p){c.style.opacity=0;tag.style.opacity=0;smooth[i]=null;return}
  if(!smooth[i])smooth[i]={x:p.x,y:p.y,w:p.w};else{smooth[i].x+=(p.x-smooth[i].x)*.58;smooth[i].y+=(p.y-smooth[i].y)*.58;smooth[i].w+=(p.w-smooth[i].w)*.58}
- const q=smooth[i],size=Math.max(64,Math.min(125,q.w*.72));c.style.width=size+"px";c.style.height=size+"px";c.style.left=q.x+"px";c.style.top=(q.y-8)+"px";c.style.opacity=assigned[i]?1:0;
+ const q=smooth[i],size=Math.max(64,Math.min(125,q.w*.72));c.style.width=size+"px";c.style.height=size+"px";c.style.left=q.x+"px";c.style.top=(q.y-8)+"px";c.style.opacity=assigned[i]?1:0;tag.style.left=q.x+"px";tag.style.top=(q.y+8)+"px";
 }
 function startLoop(){if(running)return;running=true;const loop=()=>{if(detector&&video.readyState>=2&&video.currentTime!==lastTime){lastTime=video.currentTime;try{const r=detector.detectForVideo(video,performance.now());let boxes=(r.detections||[]).map(d=>screenBox(d.boundingBox)).filter(Boolean).sort((a,b)=>a.x-b.x).slice(0,2);updateTrack(0,boxes[0]||null);updateTrack(1,boxes[1]||null)}catch(e){}}requestAnimationFrame(loop)};requestAnimationFrame(loop)}
 function show(i,t){assigned[i]=t;crests[i].src=logo(t[2]);crests[i].style.opacity=1}
 $("#camera").onclick=()=>{facing=facing==="user"?"environment":"user";smooth=[null,null];startCamera()};
-$("#spin").onclick=()=>{if(spinning)return;spinning=true;status.textContent="Sorteando...";let k=0,max=30+Math.floor(Math.random()*8);const timer=setInterval(()=>{let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(0,teams[a]);show(1,teams[b]);if(++k>=max){clearInterval(timer);let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(0,teams[a]);show(1,teams[b]);status.textContent="🔥 DUELO DEFINIDO!";if(navigator.vibrate)navigator.vibrate([80,50,160]);spinning=false}},75)};
+$("#spin").onclick=()=>{if(spinning)return;spinning=true;status.textContent="Sorteando...";let k=0,max=30+Math.floor(Math.random()*8);const timer=setInterval(()=>{let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(0,teams[a]);show(1,teams[b]);if(++k>=max){clearInterval(timer);let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(0,teams[a]);show(1,teams[b]);tiers[0].textContent=tierOf(assigned[0]);tiers[1].textContent=tierOf(assigned[1]);tiers[0].style.opacity=1;tiers[1].style.opacity=1;setTimeout(()=>{tiers[0].style.opacity=0;tiers[1].style.opacity=0},1800);status.textContent="🔥 DUELO DEFINIDO!";if(navigator.vibrate)navigator.vibrate([80,50,160]);spinning=false}},75)};
 await startCamera();await initDetector();
 </script></body></html>
