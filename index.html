@@ -1,16 +1,64 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#08090d"><title>Duelo FIFA</title><style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090d;font-family:Arial,sans-serif;color:white}#video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#111}.shade{position:fixed;inset:0;background:linear-gradient(#0008,transparent 28%,transparent 63%,#000b);pointer-events:none}.top{position:fixed;top:max(14px,env(safe-area-inset-top));left:10px;right:10px;text-align:center;text-shadow:0 2px 9px #000}.title{font-size:19px;font-weight:900}.sub{font-size:11px;margin-top:3px;opacity:.85}.duel{position:fixed;top:15%;left:3vw;right:3vw;display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{min-width:0;padding:11px 6px 12px;border:2px solid #ffffffc9;border-radius:20px;background:#090b10b8;backdrop-filter:blur(10px);text-align:center;box-shadow:0 12px 35px #0006}.label{font-size:10px;font-weight:900;letter-spacing:1px;opacity:.75}.crest{width:72px;height:72px;object-fit:contain;margin:8px auto 3px;display:block;filter:drop-shadow(0 4px 7px #0008)}.team{font-size:clamp(14px,4.3vw,20px);font-weight:900;min-height:44px;display:flex;align-items:center;justify-content:center;line-height:1.05}.country{font-size:10px;opacity:.75}.vs{position:fixed;top:30%;left:50%;transform:translate(-50%,-50%);z-index:3;background:#e51b23;border:2px solid white;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;box-shadow:0 5px 15px #0009}.controls{position:fixed;left:14px;right:14px;bottom:max(20px,calc(env(safe-area-inset-bottom) + 10px));display:flex;flex-direction:column;align-items:center;gap:8px}.status{font-size:11px;text-shadow:0 2px 7px #000}.credit{font-size:10px;opacity:.72;text-shadow:0 2px 7px #000;margin-top:1px}.spin{border:0;width:min(91vw,430px);padding:17px;border-radius:999px;background:#e51b23;color:white;font-size:17px;font-weight:900;box-shadow:0 8px 26px #e51b2359}.secondary{border:0;padding:9px 14px;border-radius:999px;background:#000a;color:white;font-weight:800}.pop{animation:pop .42s ease}@keyframes pop{50%{transform:scale(1.06)}}.placeholder{opacity:.25;filter:grayscale(1)}
-</style></head><body><video id="video" autoplay playsinline muted></video><div class="shade"></div><div class="top"><div class="title">⚽ DUELO FIFA</div><div class="sub">2 jogadores • 2 times diferentes • sem choro 😂</div></div><div class="duel">
-<div class="card" id="c1"><div class="label">JOGADOR 1</div><img class="crest placeholder" id="i1" alt=""><div class="team" id="t1">?</div><div class="country" id="p1">TOQUE EM SORTEAR</div></div>
-<div class="card" id="c2"><div class="label">JOGADOR 2</div><img class="crest placeholder" id="i2" alt=""><div class="team" id="t2">?</div><div class="country" id="p2">TOQUE EM SORTEAR</div></div></div><div class="vs">VS</div>
-<div class="controls"><div class="status" id="status">Ative a câmera para começar</div><button class="spin" id="spin">🎰 SORTEAR OS DOIS</button><button class="secondary" id="camera">↻ Trocar câmera</button><div class="credit">Criado por Nicolas Alerrandro</div></div><script>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#08090d">
+<title>Duelo FIFA V1.1</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090d;font-family:Arial,sans-serif;color:#fff}
+#video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#111}
+.shade{position:fixed;inset:0;background:linear-gradient(#0007,transparent 25%,transparent 68%,#000a);pointer-events:none}
+#overlay{position:fixed;inset:0;pointer-events:none}
+.crest{position:absolute;width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 5px 8px #000a);transform:translate(-50%,-100%);opacity:0;transition:opacity .12s}
+.top{position:fixed;top:max(13px,env(safe-area-inset-top));left:10px;right:10px;text-align:center;text-shadow:0 2px 9px #000}
+.title{font-size:18px;font-weight:900}.sub{font-size:10px;opacity:.8;margin-top:3px}
+.controls{position:fixed;z-index:5;left:14px;right:14px;bottom:max(17px,calc(env(safe-area-inset-bottom) + 8px));display:flex;flex-direction:column;align-items:center;gap:7px}
+.status{font-size:11px;text-shadow:0 2px 7px #000;text-align:center}.spin{border:0;width:min(91vw,430px);padding:16px;border-radius:999px;background:#e51b23;color:#fff;font-size:17px;font-weight:900;box-shadow:0 8px 26px #e51b2359}
+.secondary{border:0;padding:8px 13px;border-radius:999px;background:#000a;color:#fff;font-weight:800}.credit{font-size:10px;opacity:.72;text-shadow:0 2px 7px #000}
+</style>
+</head>
+<body>
+<video id="video" autoplay playsinline muted></video><div class="shade"></div>
+<div id="overlay"><img id="crest0" class="crest" alt=""><img id="crest1" class="crest" alt=""></div>
+<div class="top"><div class="title">⚽ DUELO FIFA <small>V1.1</small></div><div class="sub">Fiquem lado a lado • o escudo acompanha cada jogador</div></div>
+<div class="controls"><div class="status" id="status">Carregando detector de rostos...</div><button class="spin" id="spin">🎰 SORTEAR OS DOIS</button><button class="secondary" id="camera">↻ Trocar câmera</button><div class="credit">Criado por Nicolas Alerrandro</div></div>
+<script type="module">
+import {FaceDetector,FilesetResolver} from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/vision_bundle.mjs";
 const teams=[
 ["Real Madrid","🇪🇸 Espanha",8633],["Barcelona","🇪🇸 Espanha",8634],["Atlético de Madrid","🇪🇸 Espanha",9906],["Manchester City","🏴 Inglaterra",8456],["Liverpool","🏴 Inglaterra",8650],["Arsenal","🏴 Inglaterra",9825],["Chelsea","🏴 Inglaterra",8455],["Manchester United","🏴 Inglaterra",10260],["Tottenham","🏴 Inglaterra",8586],["Bayern de Munique","🇩🇪 Alemanha",9823],["Borussia Dortmund","🇩🇪 Alemanha",9789],["Bayer Leverkusen","🇩🇪 Alemanha",8178],["PSG","🇫🇷 França",9847],["Marseille","🇫🇷 França",8592],["Monaco","🇫🇷 França",9829],["Inter de Milão","🇮🇹 Itália",8636],["Milan","🇮🇹 Itália",8564],["Juventus","🇮🇹 Itália",9885],["Napoli","🇮🇹 Itália",9875],["Roma","🇮🇹 Itália",8686],["Benfica","🇵🇹 Portugal",9772],["Porto","🇵🇹 Portugal",9773],["Sporting","🇵🇹 Portugal",9768],["Ajax","🇳🇱 Holanda",8593],["PSV","🇳🇱 Holanda",8640],["Newcastle","🏴 Inglaterra",10261],["Aston Villa","🏴 Inglaterra",10252],["RB Leipzig","🇩🇪 Alemanha",178475]];
-const $=s=>document.querySelector(s),video=$("#video"),status=$("#status");let stream=null,facing="user",spinning=false;
+const $=s=>document.querySelector(s),video=$("#video"),status=$("#status");
+const crests=[$("#crest0"),$("#crest1")];let stream=null,facing="user",detector=null,running=false,spinning=false,lastTime=-1,assigned=[null,null],smooth=[null,null];
 const logo=id=>"https://images.fotmob.com/image_resources/logo/teamlogo/"+id+".png";
-function show(n,x){$("#t"+n).textContent=x[0];$("#p"+n).textContent=x[1];const im=$("#i"+n);im.src=logo(x[2]);im.classList.remove("placeholder")}
-async function startCamera(){try{if(stream)stream.getTracks().forEach(t=>t.stop());stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing},audio:false});video.srcObject=stream;video.style.transform=facing==="user"?"scaleX(-1)":"none";status.textContent="Câmera pronta • fiquem lado a lado"}catch(e){status.textContent="Permita o acesso à câmera no Safari"}}
-$("#camera").onclick=()=>{facing=facing==="user"?"environment":"user";startCamera()};
-$("#spin").onclick=()=>{if(spinning)return;spinning=true;$("#c1").classList.remove("pop");$("#c2").classList.remove("pop");status.textContent="Sorteando o duelo...";let k=0,max=35+Math.floor(Math.random()*10);const timer=setInterval(()=>{let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(1,teams[a]);show(2,teams[b]);if(++k>=max){clearInterval(timer);let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(1,teams[a]);show(2,teams[b]);$("#c1").classList.add("pop");$("#c2").classList.add("pop");status.textContent="🔥 DUELO DEFINIDO!";if(navigator.vibrate)navigator.vibrate([80,50,160]);spinning=false}},80)};
-startCamera();
+async function initDetector(){
+ try{
+  const vision=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm");
+  detector=await FaceDetector.createFromOptions(vision,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite",delegate:"GPU"},runningMode:"VIDEO",minDetectionConfidence:.5});
+  status.textContent="Detector pronto • fiquem lado a lado"; startLoop();
+ }catch(e){console.error(e);status.textContent="Não consegui carregar o rastreamento. Atualize a página."}
+}
+async function startCamera(){
+ try{
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});
+  video.srcObject=stream;await video.play();video.style.transform=facing==="user"?"scaleX(-1)":"none";
+  if(detector) status.textContent="Câmera pronta • fiquem lado a lado";
+ }catch(e){status.textContent="Permita o acesso à câmera no Safari"}
+}
+function screenBox(b){
+ const vw=innerWidth,vh=innerHeight,iw=video.videoWidth,ih=video.videoHeight;if(!iw||!ih)return null;
+ const scale=Math.max(vw/iw,vh/ih),dw=iw*scale,dh=ih*scale,ox=(vw-dw)/2,oy=(vh-dh)/2;
+ let x=ox+(b.originX+b.width/2)*scale;if(facing==="user")x=vw-x;
+ return {x,y:oy+b.originY*scale,w:b.width*scale};
+}
+function updateTrack(i,p){
+ const c=crests[i];if(!p){c.style.opacity=0;smooth[i]=null;return}
+ if(!smooth[i])smooth[i]={x:p.x,y:p.y,w:p.w};else{smooth[i].x+=(p.x-smooth[i].x)*.32;smooth[i].y+=(p.y-smooth[i].y)*.32;smooth[i].w+=(p.w-smooth[i].w)*.32}
+ const q=smooth[i],size=Math.max(64,Math.min(125,q.w*.72));c.style.width=size+"px";c.style.height=size+"px";c.style.left=q.x+"px";c.style.top=(q.y-8)+"px";c.style.opacity=assigned[i]?1:0;
+}
+function startLoop(){if(running)return;running=true;const loop=()=>{if(detector&&video.readyState>=2&&video.currentTime!==lastTime){lastTime=video.currentTime;try{const r=detector.detectForVideo(video,performance.now());let boxes=(r.detections||[]).map(d=>screenBox(d.boundingBox)).filter(Boolean).sort((a,b)=>a.x-b.x).slice(0,2);updateTrack(0,boxes[0]||null);updateTrack(1,boxes[1]||null)}catch(e){}}requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+function show(i,t){assigned[i]=t;crests[i].src=logo(t[2]);crests[i].style.opacity=1}
+$("#camera").onclick=()=>{facing=facing==="user"?"environment":"user";smooth=[null,null];startCamera()};
+$("#spin").onclick=()=>{if(spinning)return;spinning=true;status.textContent="Sorteando...";let k=0,max=30+Math.floor(Math.random()*8);const timer=setInterval(()=>{let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(0,teams[a]);show(1,teams[b]);if(++k>=max){clearInterval(timer);let a=Math.floor(Math.random()*teams.length),b;do b=Math.floor(Math.random()*teams.length);while(b===a);show(0,teams[a]);show(1,teams[b]);status.textContent="🔥 DUELO DEFINIDO!";if(navigator.vibrate)navigator.vibrate([80,50,160]);spinning=false}},75)};
+await startCamera();await initDetector();
 </script></body></html>
