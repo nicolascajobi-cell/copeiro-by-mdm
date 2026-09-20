@@ -10,7 +10,7 @@
 #video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#111}
 .shade{position:fixed;inset:0;background:linear-gradient(#0007,transparent 25%,transparent 68%,#000a);pointer-events:none}
 #overlay{position:fixed;inset:0;pointer-events:none}
-.crest{position:absolute;width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 5px 8px #000a);transform:translate(-50%,-100%);opacity:0;transition:opacity .12s}
+.crest{position:absolute;width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 5px 8px #000a);transform:translate(-50%,-100%);opacity:0;transition:none;will-change:left,top,width,height}
 .top{position:fixed;top:max(13px,env(safe-area-inset-top));left:10px;right:10px;text-align:center;text-shadow:0 2px 9px #000}
 .title{font-size:18px;font-weight:900}.sub{font-size:10px;opacity:.8;margin-top:3px}
 .controls{position:fixed;z-index:5;left:14px;right:14px;bottom:max(17px,calc(env(safe-area-inset-bottom) + 8px));display:flex;flex-direction:column;align-items:center;gap:7px}
@@ -53,7 +53,7 @@ function screenBox(b){
 }
 function updateTrack(i,p){
  const c=crests[i];if(!p){c.style.opacity=0;smooth[i]=null;return}
- if(!smooth[i])smooth[i]={x:p.x,y:p.y,w:p.w};else{smooth[i].x+=(p.x-smooth[i].x)*.32;smooth[i].y+=(p.y-smooth[i].y)*.32;smooth[i].w+=(p.w-smooth[i].w)*.32}
+ if(!smooth[i])smooth[i]={x:p.x,y:p.y,w:p.w};else{smooth[i].x+=(p.x-smooth[i].x)*.58;smooth[i].y+=(p.y-smooth[i].y)*.58;smooth[i].w+=(p.w-smooth[i].w)*.58}
  const q=smooth[i],size=Math.max(64,Math.min(125,q.w*.72));c.style.width=size+"px";c.style.height=size+"px";c.style.left=q.x+"px";c.style.top=(q.y-8)+"px";c.style.opacity=assigned[i]?1:0;
 }
 function startLoop(){if(running)return;running=true;const loop=()=>{if(detector&&video.readyState>=2&&video.currentTime!==lastTime){lastTime=video.currentTime;try{const r=detector.detectForVideo(video,performance.now());let boxes=(r.detections||[]).map(d=>screenBox(d.boundingBox)).filter(Boolean).sort((a,b)=>a.x-b.x).slice(0,2);updateTrack(0,boxes[0]||null);updateTrack(1,boxes[1]||null)}catch(e){}}requestAnimationFrame(loop)};requestAnimationFrame(loop)}
