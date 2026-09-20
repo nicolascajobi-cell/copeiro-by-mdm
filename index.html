@@ -7,11 +7,11 @@
 <title>Duelo FIFA V1.1</title>
 <style>
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#08090d;font-family:Arial,sans-serif;color:#fff}
-#video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#111}
-.shade{position:fixed;inset:0;background:linear-gradient(#0007,transparent 25%,transparent 68%,#000a);pointer-events:none}
-#overlay{position:fixed;inset:0;pointer-events:none}
+#video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);background:#111;z-index:0;will-change:transform;-webkit-transform:scaleX(-1)}
+.shade{position:fixed;inset:0;background:linear-gradient(#0007,transparent 25%,transparent 68%,#000a);pointer-events:none;z-index:1}
+#overlay{position:fixed;inset:0;pointer-events:none;z-index:2}
 .crest{position:absolute;width:100px;height:100px;object-fit:contain;filter:drop-shadow(0 5px 8px #000a);transform:translate(-50%,-100%);opacity:0;transition:none;will-change:left,top,width,height}
-.top{position:fixed;top:max(13px,env(safe-area-inset-top));left:10px;right:10px;text-align:center;text-shadow:0 2px 9px #000}
+.top{position:fixed;z-index:4;top:max(13px,env(safe-area-inset-top));left:10px;right:10px;text-align:center;text-shadow:0 2px 9px #000}
 .title{font-size:18px;font-weight:900}.sub{font-size:10px;opacity:.8;margin-top:3px}
 .controls{position:fixed;z-index:5;left:14px;right:14px;bottom:max(17px,calc(env(safe-area-inset-bottom) + 8px));display:flex;flex-direction:column;align-items:center;gap:7px}
 .status{font-size:11px;text-shadow:0 2px 7px #000;text-align:center}.spin{border:0;width:min(91vw,430px);padding:16px;border-radius:999px;background:#e51b23;color:#fff;font-size:17px;font-weight:900;box-shadow:0 8px 26px #e51b2359}
@@ -33,7 +33,7 @@ const logo=id=>"https://images.fotmob.com/image_resources/logo/teamlogo/"+id+".p
 async function initDetector(){
  try{
   const vision=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.22-rc.20250304/wasm");
-  detector=await FaceDetector.createFromOptions(vision,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite",delegate:"GPU"},runningMode:"VIDEO",minDetectionConfidence:.5});
+  detector=await FaceDetector.createFromOptions(vision,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/latest/blaze_face_short_range.tflite",delegate:"CPU"},runningMode:"VIDEO",minDetectionConfidence:.5});
   status.textContent="Detector pronto • fiquem lado a lado"; startLoop();
  }catch(e){console.error(e);status.textContent="Não consegui carregar o rastreamento. Atualize a página."}
 }
@@ -41,7 +41,7 @@ async function startCamera(){
  try{
   if(stream)stream.getTracks().forEach(t=>t.stop());
   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:facing,width:{ideal:1280},height:{ideal:720}},audio:false});
-  video.srcObject=stream;await video.play();video.style.transform=facing==="user"?"scaleX(-1)":"none";
+  video.srcObject=stream;await video.play();video.style.transform=facing==="user"?"scaleX(-1)":"none";video.style.webkitTransform=facing==="user"?"scaleX(-1)":"none";
   if(detector) status.textContent="Câmera pronta • fiquem lado a lado";
  }catch(e){status.textContent="Permita o acesso à câmera no Safari"}
 }
